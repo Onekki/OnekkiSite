@@ -9,14 +9,14 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
         <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/test.css') }}"> -->
         <!-- 宏定义用于生成 Bootstrap 风格的分页链接列表 -->
-        {% macro render_pagination(pagination, endpoint) %}
+        {% macro render_pagination(endpoint, pagination,  tag_id) %}
             <nav>
                 <ul class="pagination">
                     <li class="page-item">
                         {% if pagination.has_prev %}
-                            <a class="page-link" href="{{ url_for('blog.article', page=pagination.prev().page) }}" aria-label="Previous">
+                            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev().page, tag_id=tag_id) }}" aria-label="Previous">
                         {% else %}
-                            <a class="page-link" href="{{ url_for('blog.article', page=1) }}" aria-label="Previous">
+                            <a class="page-link" href="{{ url_for(endpoint, page=1, tag_id=tag_id) }}" aria-label="Previous">
                         {% endif %}
                             <span aria-hidden="true">«</span>
                         </a>
@@ -25,7 +25,7 @@
                         {% if page %}
                              {% if page!=pagination.page %}
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ url_for(endpoint, page=page) }}">
+                                    <a class="page-link" href="{{ url_for(endpoint, page=page, tag_id=tag_id) }}">
                                         {{page}}
                                     </a>
                                 </li>
@@ -37,7 +37,7 @@
                         {% endif %}
                     {% endfor %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('blog.article', page=pagination.next().page) }}" aria-label="Next">
+                        <a class="page-link" href="{{ url_for(endpoint, page=pagination.next().page, tag_id=tag_id) }}" aria-label="Next">
                             <span aria-hidden="true">»</span>
                         </a>
                     </li>
@@ -48,7 +48,7 @@
     <body>
         <div class="container">
             <div class="jumbotron">
-                <h1><a class="button" href="{{ url_for('blog.article', page=1) }}">Onekki's Blog</a></h1>
+                <h1><a href="{{ url_for('blog.article_list', page=1, tag_id=tag_id) }}"></a>Onekki's Blog</a></h1>
                 <p>Welcom to onekki's blog!</p>
             </div>
             {% block body %}

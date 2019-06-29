@@ -3,6 +3,8 @@ from flask import Flask
 from app.db.models import db
 # 配置文件引入
 from config import configs
+# 导入表单验证模块
+import wtforms
 
 def create_app(config_name):
     """创建app的方法"""

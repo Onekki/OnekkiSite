@@ -1,6 +1,7 @@
 # coding: utf-8
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import relationship
+from sqlalchemy.schema import FetchedValue
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -38,9 +39,6 @@ class BlogTag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    article_id = db.Column(db.ForeignKey('blog_tag.id'), index=True)
-
-    article = db.relationship('BlogTag', remote_side=[id], primaryjoin='BlogTag.article_id == BlogTag.id', backref='blog_tags')
 
 
 class BlogUser(db.Model):
@@ -49,3 +47,10 @@ class BlogUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     password = db.Column(db.String(255))
+
+
+t_blog_view_posts_tags = db.Table(
+    'blog_view_posts_tags',
+    db.Column('article_id', db.Integer, server_default=db.FetchedValue()),
+    db.Column('tag_id', db.Integer)
+)

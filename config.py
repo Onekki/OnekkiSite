@@ -15,6 +15,7 @@ class BaseConfig(object):
     # 查询跟踪，不太需要，False，不占用额外的内存
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_AS_ASCII = False
+    SECRET_KEY = 'CCCD756A-954C-4390-A38F-C018340769BD'
     @staticmethod
     def init_app(app):
         pass

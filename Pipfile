@@ -8,6 +8,7 @@ pylint = "*"
 flake8 = "*"
 
 [packages]
+flask-wtf = "*"
 
 [requires]
 python_version = "3.7"
