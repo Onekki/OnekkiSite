@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,, initial-scale=1">
+        <!-- 全局引入bootstrap css -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+        <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/test.css') }}"> -->
+        <!-- 宏定义用于生成 Bootstrap 风格的分页链接列表 -->
+        {% macro render_pagination(pagination, endpoint) %}
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item">
+                        {% if pagination.has_prev %}
+                            <a class="page-link" href="{{ url_for('blog.article', page=pagination.prev().page) }}" aria-label="Previous">
+                        {% else %}
+                            <a class="page-link" href="{{ url_for('blog.article', page=1) }}" aria-label="Previous">
+                        {% endif %}
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+                    {% for page in pagination.iter_pages() %}
+                        {% if page %}
+                             {% if page!=pagination.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for(endpoint, page=page) }}">
+                                        {{page}}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item active"><a class="page-link" href="">{{page}}</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item"><a class="page-link">...</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('blog.article', page=pagination.next().page) }}" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        {% endmacro %}
+    </head>
+    <body>
+        <div class="container">
+            <div class="jumbotron">
+                <h1><a class="button" href="{{ url_for('blog.article', page=1) }}">Onekki's Blog</a></h1>
+                <p>Welcom to onekki's blog!</p>
+            </div>
+            {% block body %}
+                body_content
+            {% endblock %}
+        </div>
+        <!-- 全局引入jquery -->
+        <script src="{{  url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+        <script src="{{  url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+        <!-- 全局引入bootstrap js -->
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+        <!-- <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script> -->
+    </body>
+</html>

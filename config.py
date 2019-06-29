@@ -8,12 +8,13 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 # 数据库URI
-MYSQL_DATABASE_URI = 'mysql+pymysql://root:123456@39.107.230.35:3306/onekki_site'
+MYSQL_DATABASE_URI = 'mysql+pymysql://root:zwq123456@39.107.230.35:3306/onekki_site'
 
 class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = MYSQL_DATABASE_URI
     # 查询跟踪，不太需要，False，不占用额外的内存
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JSON_AS_ASCII = False
     @staticmethod
     def init_app(app):
         pass

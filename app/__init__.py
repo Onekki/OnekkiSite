@@ -1,10 +1,8 @@
 from flask import Flask
 # mysql引入
-from flask_sqlalchemy import SQLAlchemy
+from app.db.models import db
 # 配置文件引入
 from config import configs
-
-db = SQLAlchemy()
 
 def create_app(config_name):
     """创建app的方法"""
