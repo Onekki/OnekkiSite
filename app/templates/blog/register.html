@@ -1,0 +1,30 @@
+{% extends "blog/base.html" %}
+{% block title %}
+    Register
+{% endblock %}
+{% block captcha %}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+{% block body %}
+    <div class="col-lg-3">
+        <form method="POST" action="{{ url_for('blog.register') }}">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.name.label }}
+                {{ form.name(class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.confirm.label }}
+                {{ form.confirm(class_="form-control") }}
+            </div>
+            <input class="btn btn-primary" type="submit" value="Register">
+            <div class="g-recaptcha" data-sitekey="6LcqjqsUAAAAAItx4Fhs-bhG9L4rcXT4hbXooZTL"></div>
+        </form>
+    </div>
+{% endblock %}
+

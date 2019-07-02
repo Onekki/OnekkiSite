@@ -1,6 +1,6 @@
 from flask import Flask
 # mysql引入
-from app.db.models import db
+from app.db.models import db, bcrypt
 # 配置文件引入
 from config import configs
 # 导入表单验证模块
@@ -15,7 +15,8 @@ def create_app(config_name):
     app.config.from_object(configs[config_name])
     configs[config_name].init_app(app)
     # 用SQLAlchemy初始化app
-    db.init_app(app=app)
+    db.init_app(app)
+    bcrypt.init_app(app)
     
     # 在这还可以配置其他模块，如socketio
 

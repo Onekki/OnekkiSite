@@ -2,7 +2,9 @@
 from app import db
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 
+bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 def dump_datetime(value):
@@ -67,5 +69,15 @@ class BlogUser(db.Model):
     name = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
+    def __init__(self, name, password):
+        self.name = name
+        self.password = self.set_password(password)
+
     def __repr__(self):
         return self.name
+    
+    def set_password(self, password):
+        return bcrypt.generate_password_hash(password)
+    
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)

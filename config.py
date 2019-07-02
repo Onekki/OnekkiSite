@@ -16,6 +16,8 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_AS_ASCII = False
     SECRET_KEY = 'CCCD756A-954C-4390-A38F-C018340769BD'
+    RECAPTCHA_PUBLIC_KEY = "6LcqjqsUAAAAAItx4Fhs-bhG9L4rcXT4hbXooZTL"
+    RECAPTCHA_PRIVATE_KEY = "6LcqjqsUAAAAAJlGpkoXjT1HY-nQ1lQLklwqUWug"
     @staticmethod
     def init_app(app):
         pass

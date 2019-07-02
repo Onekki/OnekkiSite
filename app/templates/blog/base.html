@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width,, initial-scale=1">
         <!-- 全局引入bootstrap css -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+        {% block css %}{% endblock %}
         <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/test.css') }}"> -->
         <!-- 宏定义用于生成 Bootstrap 风格的分页链接列表 -->
         {% macro render_pagination(endpoint, pagination,  tag_id) %}
@@ -44,6 +45,9 @@
                 </ul>
             </nav>
         {% endmacro %}
+        <!-- 添加对reCAPTCHA的支持 -->
+        {% block captcha %}
+        {% endblock %}
     </head>
     <body>
         <div class="container">
@@ -51,6 +55,19 @@
                 <h1><a href="{{ url_for('blog.article_list', page=1, tag_id=tag_id) }}"></a>Onekki's Blog</a></h1>
                 <p>Welcom to onekki's blog!</p>
             </div>
+            {% with message_list = get_flashed_messages(with_categories=true) %}
+                {% if message %}
+                    {% for category, message in message_list %}
+                        <div class="button close" data-dismiss="alert" aria-label="Close">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            {{ message_list }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+            {% endwith %}
             {% block body %}
                 body_content
             {% endblock %}
