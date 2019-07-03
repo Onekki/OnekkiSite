@@ -1,17 +1,15 @@
+# 系统模块
 import datetime
 from flask import render_template, redirect, jsonify, request, flash, url_for, get_flashed_messages
 from sqlalchemy import func
-# from flask_sqlalchemy import Pagination
-
+from flask_login import login_user, logout_user, login_required
+from flask_principal import identity_changed, current_app, Identity, AnonymousIdentity
+# 自定义的模块
 from app import db
-# 获取蓝图
 from app.blog import blog
-# 获取数据库模型对象和SQLAlchemy对象db，注意不可使用App模块中的db
-# from app.blog.models import BlogArticle, BlogTag
-# from app import db
-from app.database.models import *
+from app.database.models import BlogArticle, BlogComment, BlogRole, BlogTag, BlogUser, t_blog_article_tag, t_blog_user_role
 # 导入表单验证
-from app.form.forms import *
+from app.form import ArticleForm, CommentForm, LoginForm, RegisterForm
 
 def json_return(code, msg,data):
     return jsonify({'code':code, 'msg':msg, 'data': data})
@@ -53,17 +51,29 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        user = BlogUser.query.filter_by(name=form.name.data).one()
+
+        login_user(user, remember=form.remember.data)
+        identity_changed.send(
+            current_app._get_current_object(), identity=Identity(user.id)
+        )
+
         flash("登录成功", category="success")
         return redirect(url_for('blog.article_list', page=1))
     return render_template('blog/login.html',form=form)
 # 登出
 @blog.route('/logout', methods=['GET', 'POST'])
 def logout():
+    logout_user()
+    identity_changed.send(
+        current_app._get_current_object(), identity=AnonymousIdentity()
+    )
     flash("退出登录成功", category="success")
-    return redirect(url_for('blog.article_list'))
+    return redirect(url_for('blog.login'))
 
 # 新增文章
 @blog.route('/article_add', methods=['GET', 'POST'])
+@login_required
 def article_add():
     form = ArticleForm()
     if form.validate_on_submit():
@@ -80,6 +90,7 @@ def article_add():
 
 # 修改文章
 @blog.route('/article_update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def article_update(id):
     article = BlogArticle.query.get_or_404(id)
     form = ArticleForm()

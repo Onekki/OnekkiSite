@@ -2,14 +2,7 @@ from flask import Flask
 # 配置文件引入
 from config import configs
 
-from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-
-
-db = SQLAlchemy()
-bcrypt = Bcrypt()
-login_manager = LoginManager()
+from app.plugin import login_manager, bcrypt, db
 
 def create_app(config_name):
     """创建app的方法"""
@@ -22,7 +15,7 @@ def create_app(config_name):
     # 用SQLAlchemy初始化app
     db.init_app(app)
     bcrypt.init_app(app)
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
     
     # 在这还可以配置其他模块，如socketio
 
