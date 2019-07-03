@@ -24,3 +24,16 @@ from flask_admin.contrib.sqla import ModelView
 
 class CustomModelView(ModelView):
     pass
+
+from app.forms import CKTextAreaField
+
+class ArticleView(CustomModelView):
+    form_overrides = dict(content=CKTextAreaField)
+
+    column_searchable_list = ('content', 'title')
+
+    column_filters = ('publish_time',)
+
+    create_template = 'admin/article_update.html'
+
+    edit_template = 'admin/article_update.html'

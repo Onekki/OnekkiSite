@@ -9,7 +9,7 @@ from app.plugins import login_manager, bcrypt, db, principal, celery, cache, adm
 # 模型
 from app.database.models import *
 # admin
-from app.controller.admin.views import CustomView, CustomModelView
+from app.controller.admin.views import CustomView, CustomModelView, ArticleView
 
 from app.tasks import on_reminder_save
 
@@ -31,11 +31,12 @@ def create_app(config_name):
     admin.init_app(app)
     admin.add_view(CustomView(name='Custom'))
 
-    model_list = [BlogArticle, BlogComment, BlogReminder, BlogRole, BlogTag, BlogUser]
+    model_list = [BlogComment, BlogReminder, BlogRole, BlogTag, BlogUser]
     for model in model_list:
         admin.add_view(
             CustomModelView(model, db.session, category='Models')
         )
+    admin.add_view(ArticleView(BlogArticle, db.session, name='EditArticle'))
 
     event.listen(BlogReminder, 'after_insert', on_reminder_save)
     
