@@ -1,12 +1,12 @@
 # 系统模块
 import datetime
-from flask import render_template, redirect, jsonify, request, flash, url_for, get_flashed_messages
+from flask import render_template, redirect, jsonify, request, flash, url_for, get_flashed_messages, abort
 from sqlalchemy import func
-from flask_login import login_user, logout_user, login_required
-from flask_principal import identity_changed, current_app, Identity, AnonymousIdentity
-# 自定义的模块
-from app import db
+from flask_login import login_user, logout_user, login_required, current_user
+from flask_principal import identity_changed, current_app, Identity, AnonymousIdentity, Permission, UserNeed
+# 插件
 from app.blog import blog
+from app.plugin import db, permission_poster, permission_admin
 from app.database.models import BlogArticle, BlogComment, BlogRole, BlogTag, BlogUser, t_blog_article_tag, t_blog_user_role
 # 导入表单验证
 from app.form import ArticleForm, CommentForm, LoginForm, RegisterForm
@@ -81,6 +81,7 @@ def article_add():
         new_article.title = form.title.data
         new_article.content = form.content.data
         new_article.publish_time = datetime.datetime.now()
+        new_article.user = current_user
 
         db.session.add(new_article)
         db.session.commit()
@@ -91,17 +92,29 @@ def article_add():
 # 修改文章
 @blog.route('/article_update/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_poster.require(http_exception=403)
 def article_update(id):
     article = BlogArticle.query.get_or_404(id)
-    form = ArticleForm()
-    if form.validate_on_submit():
-        article.title = form.title.data
-        article.content = form.content.data
-        article.publish_time = datetime.datetime.now()
 
-        db.session.add(article)
-        db.session.commit()
-        return redirect(url_for('blog.article', id=article.id))
+    if not current_user:
+        return redirect(url_for('blog.login'))
+
+    if current_user != article.user:
+        return redirect(url_for('blog.article', id=id))
+    
+    permission = Permission(UserNeed(article.user.id))
+    if permission.can() or permission_admin.can():
+        form = ArticleForm()
+        if form.validate_on_submit():
+            article.title = form.title.data
+            article.content = form.content.data
+            article.publish_time = datetime.datetime.now()
+
+            db.session.add(article)
+            db.session.commit()
+            return redirect(url_for('blog.article', id=article.id))
+    else:
+        abort(403)
     
     form.title.data = article.title
     form.content.data = article.content

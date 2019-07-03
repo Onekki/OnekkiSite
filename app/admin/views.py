@@ -4,6 +4,6 @@ from app.admin import admin
 # from app.admin.models import *
 
 # 设置路由
-@site.route('/')
+@admin.route('/')
 def index():
     return 'admin首页'
