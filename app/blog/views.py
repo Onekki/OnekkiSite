@@ -2,12 +2,14 @@ import datetime
 from flask import render_template, redirect, jsonify, request, flash, url_for, get_flashed_messages
 from sqlalchemy import func
 # from flask_sqlalchemy import Pagination
+
+from app import db
 # 获取蓝图
 from app.blog import blog
 # 获取数据库模型对象和SQLAlchemy对象db，注意不可使用App模块中的db
 # from app.blog.models import BlogArticle, BlogTag
 # from app import db
-from app.db.models import *
+from app.database.models import *
 # 导入表单验证
 from app.form.forms import *
 
@@ -18,11 +20,12 @@ def sidebar_data():
     recent_article_list = BlogArticle.query.order_by(
         BlogArticle.publish_time.desc()
     ).limit(5).all()
-    count = func.count(BlogArticle.id).label('total')
+    count = func.count(t_blog_article_tag.c.article_id).label('total')
+
     top_tag_list = db.session.query(
         BlogTag.id, BlogTag.name, count
     ).filter(
-        BlogArticle.tag_id==BlogTag.id
+        BlogTag.id==t_blog_article_tag.c.tag_id
     ).group_by(BlogTag.id).order_by(count.desc()).limit(5).all()
 
     return recent_article_list, top_tag_list
@@ -108,8 +111,8 @@ def article(id):
         db.session.commit()
 
     article = BlogArticle.query.get_or_404(id)
-    tag_list = [article.tag]
-    comment_list = BlogComment.query.filter(BlogComment.article_id==id).all()
+    tag_list = article.tags
+    comment_list = article.comments.order_by(BlogComment.time.desc()).all()
     
     recent_article_list, top_tag_list = sidebar_data()
 
@@ -127,8 +130,10 @@ def article_list(page):
     tag_id = request.values.get('tag_id')
     if tag_id != None:
         print(tag_id)
-        filters.append(BlogArticle.tag_id==tag_id)
+        filters.append(t_blog_article_tag.c.tag_id==tag_id)
+        filters.append(t_blog_article_tag.c.article_id==BlogArticle.id)
     article_list = BlogArticle.query.filter(*filters).paginate(page, 5)
+
     recent_article_list, top_tag_list = sidebar_data()
     # return json_return(200, 'success', [i.serialize for i in articles])
     return render_template('blog/article_list.html', 

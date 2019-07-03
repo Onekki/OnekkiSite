@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, TextField, IntegerField, PasswordField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo
 
-from app.db.models import BlogUser
+from app.database.models import BlogUser
 
 class RegisterForm(FlaskForm):
     name = StringField('name', [DataRequired(), Length(max=255)])

@@ -12,6 +12,12 @@ def dump_datetime(value):
         return None
     return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
+articles_tags = db.Table(
+    'articles_tags',
+    db.Column('article_id', db.Integer, db.ForeignKey('blog_article.id')),
+    db.Column('tag_id', db.Integer, db.ForeignKey('blog_tag.id'))
+)
+
 class BlogArticle(db.Model):
     __tablename__ = 'blog_article'
 
@@ -22,7 +28,7 @@ class BlogArticle(db.Model):
     user_id = db.Column(db.ForeignKey('blog_user.id'), index=True)
     tag_id = db.Column(db.ForeignKey('blog_tag.id'), index=True)
 
-    tag = db.relationship('BlogTag', primaryjoin='BlogArticle.tag_id == BlogTag.id', backref='blog_articles')
+    tag = db.relationship('BlogTag', primaryjoin='BlogArticle.tag_id == BlogTag.id', backref='blog_articles', secondary=articles_tags)
     user = db.relationship('BlogUser', primaryjoin='BlogArticle.user_id == BlogUser.id', backref='blog_articles')
     
     def __repr__(self):
@@ -69,9 +75,17 @@ class BlogUser(db.Model):
     name = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
+    role_id = db.Column(db.ForeignKey('blog_role.id'), index=True)
+
+    role = db.relationship('BlogRole', primaryjoin='BlogUser.role_id == BlogRole.id', backref='blog_users')
+
     def __init__(self, name, password):
         self.name = name
         self.password = self.set_password(password)
+
+        default = BlogRole.query.filter_by(name="defalut").first()
+        self.role_id = default.id
+        self.role = default
 
     def __repr__(self):
         return self.name
@@ -81,3 +95,10 @@ class BlogUser(db.Model):
     
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
+
+class BlogRole(db.Model):
+    __tablename__ = 'blog_role'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    description = db.Column(db.String(255))
