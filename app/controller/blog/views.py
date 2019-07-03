@@ -5,15 +5,16 @@ from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_principal import identity_changed, current_app, Identity, AnonymousIdentity, Permission, UserNeed
 # 插件
-from app.blog import blog
-from app.plugin import db, permission_poster, permission_admin
+from app.controller.blog import blog
+from app.plugins import db, permission_poster, permission_admin, cache
 from app.database.models import BlogArticle, BlogComment, BlogRole, BlogTag, BlogUser, t_blog_article_tag, t_blog_user_role
 # 导入表单验证
-from app.form import ArticleForm, CommentForm, LoginForm, RegisterForm
+from app.forms import ArticleForm, CommentForm, LoginForm, RegisterForm
 
 def json_return(code, msg,data):
     return jsonify({'code':code, 'msg':msg, 'data': data})
 
+@cache.cached(timeout=7200, key_prefix='sidebar_dada')
 def sidebar_data():
     recent_article_list = BlogArticle.query.order_by(
         BlogArticle.publish_time.desc()
@@ -120,8 +121,14 @@ def article_update(id):
     form.content.data = article.content
     return render_template('blog/article_update.html', form=form, article=article)
 
+def make_cache_key(*args, **kwargs):
+    path = request.path
+    args = str(hash(frozenset(request.args.items())))
+    return (path + args).encode('utf-8')
+
 # 获取文章
 @blog.route('/article/<int:id>', methods=['GET','POST'])
+@cache.cached(timeout=60, key_prefix=make_cache_key)
 def article(id):
 
     form = CommentForm()
@@ -149,11 +156,11 @@ def article(id):
                             top_tag_list=top_tag_list)
 
 @blog.route('/article_list/<int:page>')
+@cache.cached(timeout=60)
 def article_list(page):
     filters = []
     tag_id = request.values.get('tag_id')
     if tag_id != None:
-        print(tag_id)
         filters.append(t_blog_article_tag.c.tag_id==tag_id)
         filters.append(t_blog_article_tag.c.article_id==BlogArticle.id)
     article_list = BlogArticle.query.filter(*filters).paginate(page, 5)

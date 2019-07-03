@@ -26,6 +26,7 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     CELERY_RESULT_BACKEND = 'redis://39.107.230.35:6379/0'
     CELERY_BROKER_URL = 'redis://39.107.230.35:6379/0'
+    CACHE_TYPE = 'simple'
     pass
 
 

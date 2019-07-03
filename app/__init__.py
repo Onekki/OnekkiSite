@@ -5,9 +5,13 @@ from sqlalchemy import event
 # 配置文件
 from config import configs
 # 插件
-from app.plugin import login_manager, bcrypt, db, principal, celery
+from app.plugins import login_manager, bcrypt, db, principal, celery, cache, admin
 # 模型
-from app.database.models import BlogReminder
+from app.database.models import *
+# admin
+from app.controller.admin.views import CustomView, CustomModelView
+
+from app.tasks import on_reminder_save
 
 def create_app(config_name):
     """创建app的方法"""
@@ -23,6 +27,15 @@ def create_app(config_name):
     login_manager.init_app(app)
     principal.init_app(app)
     celery.init_app(app)
+    cache.init_app(app)
+    admin.init_app(app)
+    admin.add_view(CustomView(name='Custom'))
+
+    model_list = [BlogArticle, BlogComment, BlogReminder, BlogRole, BlogTag, BlogUser]
+    for model in model_list:
+        admin.add_view(
+            CustomModelView(model, db.session, category='Models')
+        )
 
     event.listen(BlogReminder, 'after_insert', on_reminder_save)
     
@@ -35,11 +48,11 @@ def create_app(config_name):
             for role in current_user.roles:
                 identity.provides.add(RoleNeed(role.name))
     # 注册蓝图
-    from app.site import site
-    from app.admin import admin
-    from app.blog import blog
+    from app.controller.site import site
+    # from app.admin import admin
+    from app.controller.blog import blog
 
-    app.register_blueprint(admin, url_prefix = '/admin')
+    # app.register_blueprint(admin, url_prefix = '/admin')
     app.register_blueprint(site, url_prefix = '/site')
     app.register_blueprint(blog, url_prefix = '/blog')
 

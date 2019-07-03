@@ -8,4 +8,4 @@ site = Blueprint('site', __name__,
     static_folder=STATIC_DIR)
 
 # 这里导入是为了在解释时，蓝图能加载到views文件中的路由数据
-from app.site import views
+from app.controller.site import views

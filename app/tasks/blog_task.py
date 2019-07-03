@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 
 from flask_mail import Message
 
-from app.plugin import celery, mail
+from app.plugins import celery, mail
 from app.database.models import BlogReminder
 
 @celery.task(
@@ -32,6 +32,6 @@ def remind(self, primary_key):
     except Exception as e:
         self.rety(exc=e)
 
-def on_redminder_save(mapper, connect, self):
+def on_reminder_save(mapper, connect, self):
     remind.apply_async(args=(self.id), eta=self.date)
 
