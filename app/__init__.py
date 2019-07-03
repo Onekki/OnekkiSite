@@ -1,10 +1,13 @@
 from flask import Flask
 from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
+from sqlalchemy import event
 # 配置文件
 from config import configs
 # 插件
-from app.plugin import login_manager, bcrypt, db, principal
+from app.plugin import login_manager, bcrypt, db, principal, celery
+# 模型
+from app.database.models import BlogReminder
 
 def create_app(config_name):
     """创建app的方法"""
@@ -19,6 +22,9 @@ def create_app(config_name):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     principal.init_app(app)
+    celery.init_app(app)
+
+    event.listen(BlogReminder, 'after_insert', on_reminder_save)
     
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
