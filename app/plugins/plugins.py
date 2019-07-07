@@ -44,7 +44,3 @@ mail = Mail()
 from flask_cache import Cache
 cache = Cache()
 
-
-# 后台管理
-from flask_admin import Admin
-admin = Admin()

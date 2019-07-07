@@ -1,5 +1,5 @@
 # coding: utf-8
-from app import db
+from app.plugins import db
 
 
 class BlogRole(db.Model):

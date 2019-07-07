@@ -1,4 +1,4 @@
-from app import db
+from app.plugins import db
 
 t_blog_article_tag = db.Table(
     'blog_article_tag',

@@ -1,4 +1,4 @@
-from app import db
+from app.plugins import db
 
 class BlogReminder(db.Model):
     __tablename__ = 'blog_reminder'

@@ -1,6 +1,9 @@
 # coding: utf-8
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import BadSignature, SignatureExpired
+from flask_principal import current_app
 from flask_login import AnonymousUserMixin
-from app import db, bcrypt
+from app.plugins import db, bcrypt
 
 
 class BlogUser(db.Model):
@@ -11,6 +14,7 @@ class BlogUser(db.Model):
     name = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
 
+    articles = db.relationship('BlogArticle', backref='blog_user', lazy='dynamic')
     roles = db.relationship('BlogRole', secondary='onekki_site.blog_user_role', backref=db.backref('blog_users', lazy='dynamic'))
 
     # 自定义
@@ -47,3 +51,18 @@ class BlogUser(db.Model):
     
     def get_id(self):
         return self.id
+
+    @staticmethod
+    def verify_auth_token(token):
+        serializer = Serializer(
+            current_app.config['SECRET_KEY']
+        )
+        try:
+            data = serializer.loads(token)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
+        
+        user = BlogUser.query.filter_by(id=data['id']).first()
+        return user

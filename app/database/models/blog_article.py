@@ -1,5 +1,5 @@
 # coding: utf-8
-from app import db
+from app.plugins import db
 
 class BlogArticle(db.Model):
     __tablename__ = 'blog_article'

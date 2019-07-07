@@ -1,32 +1,31 @@
-# 获取蓝图
-# from app.admin import admin
-# # 获取数据库模型对象和SQLAlchemy对象db，注意不可使用App模块中的db
-# # from app.admin.models import *
-
-# # 设置路由
-# @admin.route('/')
-# def index():
-#     return 'admin首页'
-
 from flask_admin import BaseView, expose
+from flask_login import login_required, current_user
+from app.plugins import permission_admin
 
-
+# 基础视图
 class CustomView(BaseView):
     @expose('/')
+    @login_required
+    @permission_admin.require(http_exception=403)
     def index(self):
         return self.render('admin/custom.html')
     
     @expose('/second_page')
+    @login_required
+    @permission_admin.require(http_exception=403)
     def second_page(self):
         return self.render('admin/second_page.html')
 
 from flask_admin.contrib.sqla import ModelView
-
+# 模型管理
 class CustomModelView(ModelView):
-    pass
 
-from app.forms import CKTextAreaField
+    def is_accessible(self):
+        user = current_user
+        return current_user.is_authenticated() and permission_admin.can()
 
+from app.forms.blog import CKTextAreaField
+# 文章修改增强
 class ArticleView(CustomModelView):
     form_overrides = dict(content=CKTextAreaField)
 
@@ -37,3 +36,10 @@ class ArticleView(CustomModelView):
     create_template = 'admin/article_update.html'
 
     edit_template = 'admin/article_update.html'
+
+from flask_admin.contrib.fileadmin import FileAdmin
+# 文件管理
+class CustomFileView(FileAdmin):
+    def is_accessible(self):
+       return current_user.is_authenticated() and permission_admin.can()
+

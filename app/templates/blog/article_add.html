@@ -5,7 +5,7 @@
 {% block body %}
     <div class="row">
         <h1 class="text-center">Create A New Article</h1>
-        <form method="POST" action="{{ url_for('blog.article_add') }}">
+        <form method="POST" action="{{ url_for('blog.article_create') }}">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {% if form.title.errors %}

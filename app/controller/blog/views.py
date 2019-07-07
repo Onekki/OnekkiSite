@@ -1,19 +1,43 @@
 # 系统模块
 import datetime
-from flask import render_template, redirect, jsonify, request, flash, url_for, get_flashed_messages, abort
+from flask import (
+    render_template, 
+    redirect, 
+    jsonify, 
+    request, 
+    flash, 
+    url_for, 
+    get_flashed_messages, 
+    abort
+)
 from sqlalchemy import func
-from flask_login import login_user, logout_user, login_required, current_user
-from flask_principal import identity_changed, current_app, Identity, AnonymousIdentity, Permission, UserNeed
+from flask_login import (
+    login_user, 
+    logout_user, 
+    login_required, 
+    current_user
+)
+from flask_principal import (
+    identity_changed, 
+    current_app, 
+    Identity,
+    AnonymousIdentity, 
+    Permission, 
+    UserNeed
+)
 # 插件
 from app.controller.blog import blog
-from app.plugins import db, permission_poster, permission_admin, cache
-from app.database.models import BlogArticle, BlogComment, BlogRole, BlogTag, BlogUser, t_blog_article_tag, t_blog_user_role
+from app.plugins import (
+    db, 
+    permission_poster, 
+    permission_admin, 
+    cache
+)
+from app.database.models import *
 # 导入表单验证
-from app.forms import ArticleForm, CommentForm, LoginForm, RegisterForm
+from app.forms.blog import *
 
-def json_return(code, msg,data):
-    return jsonify({'code':code, 'msg':msg, 'data': data})
-
+# 侧边栏
 @cache.cached(timeout=7200, key_prefix='sidebar_dada')
 def sidebar_data():
     recent_article_list = BlogArticle.query.order_by(
@@ -33,6 +57,7 @@ def sidebar_data():
 @blog.route('/')
 def index():
     return render_template('blog/index.html', data = sidebar_data())
+
 # 注册
 @blog.route('/register', methods=['GET', 'POST'])
 def register():
@@ -62,6 +87,7 @@ def login():
         flash("登录成功", category="success")
         return redirect(url_for('blog.article_list', page=1))
     return render_template('blog/login.html',form=form)
+
 # 登出
 @blog.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -73,9 +99,9 @@ def logout():
     return redirect(url_for('blog.login'))
 
 # 新增文章
-@blog.route('/article_add', methods=['GET', 'POST'])
+@blog.route('/article_create', methods=['GET', 'POST'])
 @login_required
-def article_add():
+def article_create():
     form = ArticleForm()
     if form.validate_on_submit():
         new_article = BlogArticle()
@@ -88,7 +114,7 @@ def article_add():
         db.session.commit()
         return redirect(url_for('blog.article_list', page=1))
 
-    return render_template('blog/article_add.html', form=form)
+    return render_template('blog/article_create.html', form=form)
 
 # 修改文章
 @blog.route('/article_update/<int:id>', methods=['GET', 'POST'])
@@ -121,6 +147,7 @@ def article_update(id):
     form.content.data = article.content
     return render_template('blog/article_update.html', form=form, article=article)
 
+# 缓存的key
 def make_cache_key(*args, **kwargs):
     path = request.path
     args = str(hash(frozenset(request.args.items())))
@@ -155,6 +182,7 @@ def article(id):
                             recent_article_list=recent_article_list,
                             top_tag_list=top_tag_list)
 
+# 文章列表
 @blog.route('/article_list/<int:page>')
 @cache.cached(timeout=60)
 def article_list(page):
@@ -173,18 +201,21 @@ def article_list(page):
                             recent_article_list=recent_article_list,
                             top_tag_list=top_tag_list)
 
+# 用户列表
 @blog.route('/user_list/<int:page>')
 def user_list(page):
     users = BlogUser.query.all()
     # return json_return(200, 'success', [i.serialize for i in articles])
     return render_template('blog/user.html', users=users)
 
+# tag列表
 @blog.route('/tag_list/<int:page>')
 def tag_list(page):
     tags = BlogTag.query.all()
     # return json_return(200, 'success', [i.serialize for i in articles])
     return render_template('blog/tag.html', tags=tags)
 
+# 评论列表
 @blog.route('/comment_list/<int:page>')
 def comment_list(page):
     comments = BlogComment.query.all()
