@@ -1,5 +1,5 @@
 import os
-
+from datetime import timedelta
 # 项目绝对路径
 BASE_DIR = os.getcwd()
 # 模版文件路径
@@ -18,6 +18,8 @@ class BaseConfig(object):
     SECRET_KEY = 'CCCD756A-954C-4390-A38F-C018340769BD'
     RECAPTCHA_PUBLIC_KEY = '6LcqjqsUAAAAAItx4Fhs-bhG9L4rcXT4hbXooZTL'
     RECAPTCHA_PRIVATE_KEY = '6LcqjqsUAAAAAJlGpkoXjT1HY-nQ1lQLklwqUWug'
+    
+    SEND_FILE_MAX_AGE_DEFAULT = timedelta(seconds=5)
     @staticmethod
     def init_app(app):
         pass

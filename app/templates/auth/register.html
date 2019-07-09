@@ -1,0 +1,73 @@
+{% extends "auth/base.html" %}
+{% block title %}
+Register
+{% endblock %}
+{% block captcha %}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+{% block body %}
+<div class="authpage auth-reg">
+    <div class="container">
+        <section class="content-inner">
+            <form method="POST" action="{{ url_for('site.register') }}">
+                <div class="auth-main auth-row">
+                    <div class="auth-top auth-row">
+                        <a class="boardtop-left" href="{{ url_for('site.index') }}">
+                            <div>首页</div>
+                        </a>
+                        <div class="modal-footer">
+                            <p class="card-heading" align="center">注册</p>
+                        </div>
+                        <a class="boardtop-right" href="{{ url_for('site.login') }}">
+                            <div>登录</div>
+                        </a>
+                    </div>
+
+                    {{ obj_form.hidden_tag() }}
+                    <div class="rowtocol">
+                        <div class="auth-row">
+                            <div class="form-group-label auth-row">
+                                {{ obj_form.name.label(class_="floating-label") }}
+                                {{ obj_form.name(class_="form-control maxwidth-auth")}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rowtocol">
+                        <div class="auth-row">
+                            <div class="form-group-label auth-row">
+                                {{ obj_form.password.label(class_="floating-label") }}
+                                {{ obj_form.password(class_="form-control maxwidth-auth")}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rowtocol">
+                        <div class="auth-row">
+                            <div class="form-group-label auth-row">
+                                {{ obj_form.confirm.label(class_="floating-label") }}
+                                {{ obj_form.confirm(class_="form-control maxwidth-auth")}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rowtocol">
+                        <div class="btn-auth auth-row">
+                            <div class="g-recaptcha" data-sitekey="6LcqjqsUAAAAAItx4Fhs-bhG9L4rcXT4hbXooZTL"></div>
+                        </div>
+                    </div>
+                    <div class="rowtocol">
+                        <div class="btn-auth auth-row">
+                            <button class="btn-reg btn btn-block btn-brand waves-attach waves-light"
+                            type="submit" >确认注册</button>
+                        </div>
+                    </div>
+
+                    <div class="auth-bottom auth-row auth-reg">
+                    </div>
+
+                </div>
+            </form>
+        </section>
+    </div>
+
+</div>
+{% endblock %}

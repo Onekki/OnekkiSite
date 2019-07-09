@@ -1,0 +1,21 @@
+<!--  <script src="//cdn.staticfile.org/jquery/2.2.1/jquery.min.js"></script> -->
+<script src="{{ url_for('static', filename='js/jquery-2.2.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/perfect-scrollbar.jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/material-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/material.min.js') }}"></script>
+<script src="https://cdn.justssr.com/assets/js/love.js"></script>
+<!--  <script text="text/javascript" src="/assets/js/particle.js"></script> -->
+<script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/mdb.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fakeLoader.min.js') }}"></script>
+
+<script>new WOW().init();</script>
+<script>
+    $(document).ready(function () {
+        $(".fakeloader").fakeLoader({
+            timeToHide: 2000,
+            bgColor: "#3498db",
+            spinner: "spinner4"
+        });
+    });
+</script>

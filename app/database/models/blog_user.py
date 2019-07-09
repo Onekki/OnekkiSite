@@ -4,6 +4,7 @@ from itsdangerous import BadSignature, SignatureExpired
 from flask_principal import current_app
 from flask_login import AnonymousUserMixin
 from app.plugins import db, bcrypt
+from .blog_role import BlogRole
 
 
 class BlogUser(db.Model):
@@ -21,8 +22,8 @@ class BlogUser(db.Model):
     def __init__(self, name, password):
         self.name = name
         self.password = self.set_password(password)
-
-        defalut = db.session.query('BlogRole').filter_by(name="default").one()
+        
+        defalut = BlogRole.query.filter_by(name="default").first()
         self.roles.append(defalut)
     
     def __repr__(self):

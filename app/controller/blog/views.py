@@ -58,50 +58,11 @@ def sidebar_data():
 def index():
     return render_template('blog/index.html', data = sidebar_data())
 
-# 注册
-@blog.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        new_user = BlogUser(name=form.name.data,password=form.password.data)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash("注册成功, 请登录!")
-        
-        return redirect(url_for('blog.login'))
-    return render_template('blog/register.html',form=form)
-
-# 登录
-@blog.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = BlogUser.query.filter_by(name=form.name.data).one()
-
-        login_user(user, remember=form.remember.data)
-        identity_changed.send(
-            current_app._get_current_object(), identity=Identity(user.id)
-        )
-
-        flash("登录成功", category="success")
-        return redirect(url_for('blog.article_list', page=1))
-    return render_template('blog/login.html',form=form)
-
-# 登出
-@blog.route('/logout', methods=['GET', 'POST'])
-def logout():
-    logout_user()
-    identity_changed.send(
-        current_app._get_current_object(), identity=AnonymousIdentity()
-    )
-    flash("退出登录成功", category="success")
-    return redirect(url_for('blog.login'))
 
 # 新增文章
-@blog.route('/article_create', methods=['GET', 'POST'])
+@blog.route('/article/add', methods=['GET', 'POST'])
 @login_required
-def article_create():
+def article_add():
     form = ArticleForm()
     if form.validate_on_submit():
         new_article = BlogArticle()
@@ -114,20 +75,20 @@ def article_create():
         db.session.commit()
         return redirect(url_for('blog.article_list', page=1))
 
-    return render_template('blog/article_create.html', form=form)
+    return render_template('blog/article/add.html', obj_form=form)
 
 # 修改文章
-@blog.route('/article_update/<int:id>', methods=['GET', 'POST'])
+@blog.route('/article/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 @permission_poster.require(http_exception=403)
-def article_update(id):
+def article_edit(id):
     article = BlogArticle.query.get_or_404(id)
 
     if not current_user:
-        return redirect(url_for('blog.login'))
+        return redirect(url_for('site.login'))
 
     if current_user != article.user:
-        return redirect(url_for('blog.article', id=id))
+        return redirect(url_for('blog.article_one', id=id))
     
     permission = Permission(UserNeed(article.user.id))
     if permission.can() or permission_admin.can():
@@ -139,13 +100,13 @@ def article_update(id):
 
             db.session.add(article)
             db.session.commit()
-            return redirect(url_for('blog.article', id=article.id))
+            return redirect(url_for('blog.article_one', id=article.id))
     else:
         abort(403)
     
     form.title.data = article.title
     form.content.data = article.content
-    return render_template('blog/article_update.html', form=form, article=article)
+    return render_template('blog/article/edit.html', obj_form=form, article_one=article)
 
 # 缓存的key
 def make_cache_key(*args, **kwargs):
@@ -154,9 +115,9 @@ def make_cache_key(*args, **kwargs):
     return (path + args).encode('utf-8')
 
 # 获取文章
-@blog.route('/article/<int:id>', methods=['GET','POST'])
+@blog.route('/article/one/<int:id>', methods=['GET','POST'])
 @cache.cached(timeout=60, key_prefix=make_cache_key)
-def article(id):
+def article_one(id):
 
     form = CommentForm()
     if form.validate_on_submit():
@@ -174,16 +135,16 @@ def article(id):
     
     recent_article_list, top_tag_list = sidebar_data()
 
-    return render_template('blog/article.html',
-                            article=article,
-                            form=form,
+    return render_template('blog/article/one.html',
+                            article_one=article,
+                            obj_form=form,
                             tag_list=tag_list,
                             comment_list=comment_list,
                             recent_article_list=recent_article_list,
                             top_tag_list=top_tag_list)
 
 # 文章列表
-@blog.route('/article_list/<int:page>')
+@blog.route('/article/list/<int:page>')
 @cache.cached(timeout=60)
 def article_list(page):
     filters = []
@@ -191,33 +152,12 @@ def article_list(page):
     if tag_id != None:
         filters.append(t_blog_article_tag.c.tag_id==tag_id)
         filters.append(t_blog_article_tag.c.article_id==BlogArticle.id)
-    article_list = BlogArticle.query.filter(*filters).paginate(page, 5)
+    article_list = BlogArticle.query.filter(*filters).paginate(page, 8)
 
     recent_article_list, top_tag_list = sidebar_data()
     # return json_return(200, 'success', [i.serialize for i in articles])
-    return render_template('blog/article_list.html', 
+    return render_template('blog/article/list.html', 
                             tag_id=tag_id,
                             article_list=article_list, 
                             recent_article_list=recent_article_list,
                             top_tag_list=top_tag_list)
-
-# 用户列表
-@blog.route('/user_list/<int:page>')
-def user_list(page):
-    users = BlogUser.query.all()
-    # return json_return(200, 'success', [i.serialize for i in articles])
-    return render_template('blog/user.html', users=users)
-
-# tag列表
-@blog.route('/tag_list/<int:page>')
-def tag_list(page):
-    tags = BlogTag.query.all()
-    # return json_return(200, 'success', [i.serialize for i in articles])
-    return render_template('blog/tag.html', tags=tags)
-
-# 评论列表
-@blog.route('/comment_list/<int:page>')
-def comment_list(page):
-    comments = BlogComment.query.all()
-    # return json_return(200, 'success', [i.serialize for i in articles])
-    return render_template('blog/comment.html', comments=comments)

@@ -15,7 +15,7 @@ for model in model_list:
     admin.add_view(
         CustomModelView(model, db.session, category='Models')
     )
-admin.add_view(ArticleView(BlogArticle, db.session, name='EditArticle'))
+# admin.add_view(ArticleView(BlogArticle, db.session, name='EditArticle'))
 
 T_DIR = os.path.dirname(os.path.realpath(__file__))#获取项目根目录
 T_DIR = os.path.dirname(T_DIR)

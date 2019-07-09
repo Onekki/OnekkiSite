@@ -51,7 +51,7 @@ def create_app(config_name):
     from app.controller.blog import blog
 
     # app.register_blueprint(admin, url_prefix = '/admin')
-    app.register_blueprint(site, url_prefix = '/site')
+    app.register_blueprint(site, url_prefix = '/')
     app.register_blueprint(blog, url_prefix = '/blog')
 
 # 放回Flask对象app

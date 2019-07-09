@@ -1,0 +1,87 @@
+{% extends "auth/base.html" %}
+{% block body %}
+<div class="authpage">
+    <div class="container">
+        <form method="POST" action="{{ url_for('site.login') }}">
+            <div class="auth-main auth-row">
+                <div class="auth-top auth-row">
+                    <a class="boardtop-left" href="{{ url_for('blog.article_list', page=1) }}">
+                        <div>首 页</div>
+                    </a>
+                    <div class="modal-footer">
+                        <p class="card-heading" align="left">Onekki's Site</p>
+                        <!-- <p class="card-heading" align="center">Our story starts here.</p> -->
+                    </div>
+                    <a href="register.html" class="boardtop-right">
+                        <div>注 册</div>
+                    </a>
+                </div>
+
+                {{ obj_form.hidden_tag() }}
+                <div class="auth-row">
+                    <div class="form-group-label auth-row row-login">
+                        {{ obj_form.name.label(class_="floating-label") }}
+                        {% if obj_form.name.errors %}
+                        {% for error in obj_form.name.errors %}
+                        <p class="help-block">{{ error }}</p>
+                        {% endfor %}
+                        {% endif %}
+                        {{ obj_form.name(class_="form-control maxwidth-auth") }}
+                    </div>
+                </div>
+                <div class="auth-row">
+                    <div class="form-group-label auth-row row-login">
+                        {{ obj_form.password.label(class_="floating-label") }}
+                        {% if obj_form.password.errors %}
+                        {% for error in obj_form.password.errors %}
+                        <p class="help-block">{{ error }}</p>
+                        {% endfor %}
+                        {% endif %}
+                        {{ obj_form.password(class_="form-control maxwidth-auth") }}
+                    </div>
+                </div>
+                <!-- <div class="auth-row">
+                    <div class="form-group-label auth-row row-login">
+                        <label class="floating-label">两步验证码（未设置请忽略）</label>
+                        <input class="form-control maxwidth-auth" type="text">
+                    </div>
+                </div> -->
+                <div class="btn-auth auth-row">
+                    <button class="btn btn-block btn-brand waves-attach waves-light" type="submit">
+                        确认登录
+                    </button>
+                </div>
+                <div class="auth-help auth-row">
+                    <div class="auth-help-table auth-row">
+                        <div class="checkbox checkbox-adv">
+                            <label for="remember_me">
+                                <input class="access-hide" value="week" id="remember_me" name="remember_me"
+                                    type="checkbox">记住我
+                                <span class="checkbox-circle"></span><span class="checkbox-circle-check"></span><span
+                                    class="checkbox-circle-icon icon">done</span>
+                            </label>
+                        </div>
+                        <a href="../password/reset.html">忘记密码？</a>
+                    </div>
+                </div>
+                <div class="auth-bottom auth-row">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div aria-hidden="true" class="modal modal-va-middle fade" id="result" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <div class="modal-inner">
+                <p class="h5 margin-top-sm text-black-hint" id="msg"></p>
+            </div>
+            <div class="modal-footer">
+                <p class="text-right"><button class="btn btn-flat btn-brand-accent waves-attach" data-dismiss="modal"
+                        type="button" id="result_ok">知道了</button></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

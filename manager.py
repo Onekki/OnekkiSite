@@ -9,7 +9,7 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 
 # 从模型创建数据库的指令
-manager.add_command("server", Server(host='0.0.0.0', port=80))
+manager.add_command("server", Server(host='0.0.0.0', port=5000))
 
 @manager.shell
 def make_shell_context():

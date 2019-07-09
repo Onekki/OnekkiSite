@@ -1,81 +1,90 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>{% block title %}{% endblock %}</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,, initial-scale=1">
-        <!-- 全局引入bootstrap css -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-        {% block css %}{% endblock %}
-        <!-- 宏定义用于生成 Bootstrap 风格的分页链接列表 -->
-        {% macro render_pagination(endpoint, pagination,  tag_id) %}
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item">
-                        {% if pagination.has_prev %}
-                            <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev().page, tag_id=tag_id) }}" aria-label="Previous">
-                        {% else %}
-                            <a class="page-link" href="{{ url_for(endpoint, page=1, tag_id=tag_id) }}" aria-label="Previous">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,, initial-scale=1">
+    <!-- css -->
+	<link href="{{ url_for('static', filename='theme/material/css/base.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='theme/material/css/project.min.css') }}" rel="stylesheet">
+    <link href="https://fonts.loli.net/css?family=Roboto:300,300italic,400,400italic,500,500italic|Material+Icons" rel="stylesheet">
+    <link href="{{ url_for('static', filename='theme/material/css/user.css') }}" rel="stylesheet" >
+	<!-- jquery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
+
+    {% block css %}{% endblock %}
+    <!-- 宏定义用于生成 Bootstrap 风格的分页链接列表 -->
+    {% macro render_pagination(endpoint, pagination,  tag_id) %}
+    <nav class="col-lg-12">
+        <ul class="pagination">
+            <li class="page-item">
+                {% if pagination.has_prev %}
+                <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev().page, tag_id=tag_id) }}"
+                    aria-label="Previous">
+                    {% else %}
+                    <a class="page-link" href="{{ url_for(endpoint, page=1, tag_id=tag_id) }}" aria-label="Previous">
                         {% endif %}
-                            <span aria-hidden="true">«</span>
-                        </a>
-                    </li>
-                    {% for page in pagination.iter_pages() %}
-                        {% if page %}
-                             {% if page!=pagination.page %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ url_for(endpoint, page=page, tag_id=tag_id) }}">
-                                        {{page}}
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="page-item active"><a class="page-link" href="">{{page}}</a></li>
-                            {% endif %}
-                        {% else %}
-                            <li class="page-item"><a class="page-link">...</a></li>
-                        {% endif %}
-                    {% endfor %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for(endpoint, page=pagination.next().page, tag_id=tag_id) }}" aria-label="Next">
-                            <span aria-hidden="true">»</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        {% endmacro %}
-        <!-- 添加对reCAPTCHA的支持 -->
-        {% block captcha %}
-        {% endblock %}
-    </head>
-    <body>
-        <div class="container">
-            <div class="jumbotron">
-                <h1><a href="{{ url_for('blog.article_list', page=1, tag_id=tag_id) }}"></a>Onekki's Blog</a></h1>
-                <p>Welcom to onekki's blog!</p>
-            </div>
-            {% with message_list = get_flashed_messages(with_categories=true) %}
-                {% if message %}
-                    {% for category, message in message_list %}
-                        <div class="button close" data-dismiss="alert" aria-label="Close">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            {{ message_list }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
-            {% endwith %}
-            {% block body %}
-                body_content
-            {% endblock %}
+                        <span aria-hidden="true">«</span>
+                    </a>
+            </li>
+            {% for page in pagination.iter_pages() %}
+            {% if page %}
+            {% if page!=pagination.page %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for(endpoint, page=page, tag_id=tag_id) }}">
+                    {{page}}
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item active"><a class="page-link" href="">{{page}}</a></li>
+            {% endif %}
+            {% else %}
+            <li class="page-item"><a class="page-link">...</a></li>
+            {% endif %}
+            {% endfor %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for(endpoint, page=pagination.next().page, tag_id=tag_id) }}"
+                    aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    {% endmacro %}
+    <!-- 添加对reCAPTCHA的支持 -->
+    {% block captcha %}
+    {% endblock %}
+</head>
+
+<body class="page-orange">
+    
+    <div class="container">
+        {% with message_list = get_flashed_messages(with_categories=true) %}
+        {% if message %}
+        {% for category, message in message_list %}
+        <div class="button close" data-dismiss="alert" aria-label="Close">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ message_list }}
         </div>
-        <!-- 全局引入jquery -->
-        <script src="{{  url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
-        <script src="{{  url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
-        <!-- 全局引入bootstrap js -->
-        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-        {% block js %}{% endblock %}
-    </body>
+        {% endfor %}
+        {% endif %}
+
+        {% endwith %}
+    </div>
+    {% block body %}
+
+    {% endblock %}
+   <!-- js -->
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0"></script>
+    <script src="{{ url_for('static',filename='theme/material/js/base.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='theme/material/js/project.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@1.5.16/dist/clipboard.min.js"></script>
+    <script type="text/javascript" color="0,217,255" opacity="0.5" count="49" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1"></script>
+    {% block js %}{% endblock %}
+</body>
+
 </html>
