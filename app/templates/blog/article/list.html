@@ -1,20 +1,74 @@
 {% extends "blog/base.html" %}
 {% block title %}Onekki Blog{% endblock %}
 
-{% block css %}
-<style>
-.subtitle{
-    font-size: 0.2rem;
-}
-</style>
+{% block body_title %}
+文章列表
 {% endblock %}
 
+{% block body_content %}
+<div class="col-xx-12 col-sm-8">
+    <!-- 文章列表 -->
+    {% for article in article_list.items %}
+    <div class="card">
+        <div class="card-main">
+            <div class="card-inner">
+                <p class="card-heading">{{ article.title }}</p>
+                <p>{{ article.content|truncate(255)|safe}}</p>
+                <a href="{{ url_for('blog.article_one', id=article.id) }}">阅读详情</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- end 文章列表 -->
+    <!-- 分页 -->
+    <div class="card">
+        <div class="card-main">
+            <div class="card-inner margin-bottom-no margin-top-no">
+                <!-- 调用父模版的 macro render_pagination -->
+                {{ render_pagination('blog.article_list', article_list, tag_id) }}
+            </div>
+        </div>
+    </div>
+</div>
 
-{% block body %}
+<div class="col-xx-12 col-sm-4">
+    <!-- 最近文章 -->
+    <div class="card">
+        <div class="card-main">
+            <div class="card-inner margin-bottom-no">
+                <p class="card-heading">最近文章</p>
+                <ul>
+                    {% for article in recent_article_list %}
+                    <li><a href="{{ url_for('blog.article_one', id=article.id) }}">
+                            {{ article.title }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- end 最近文章 -->
 
-{% include "blog/header.html" %}
+    <!-- 最热tag -->
+    <div class="card">
+        <div class="card-main">
+            <div class="card-inner">
+                <p class="card-heading">热门标签</p>
+                <ul>
+                    {% for tag in top_tag_list %}
+                    <li><a href="{{ url_for('blog.article_list', page=1, tag_id=tag[0]) }}">{{ tag }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- end tag -->
+</div>
 
-<div class="content">
+{% endblock %}
+
+<!-- <div class="content">
 
     <div class="content-header ui-content-header">
         <div class="container">
@@ -25,70 +79,10 @@
     <div class="container">
         <section class="content-inner">
             <div class="ui-card-wrap">
-                <div class="col-xx-12 col-sm-8">
-                    <!-- 文章列表 -->
-                    {% for article in article_list.items %}
-                    <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner">
-                                <p class="card-heading">{{ article.title }}</p>
-                                <p>{{ article.content|truncate(255)|safe}}</p>
-                                <a href="{{ url_for('blog.article_one', id=article.id) }}">阅读详情</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                     <!-- end 文章列表 -->
-                    <!-- 分页 -->
-                    <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner margin-bottom-no margin-top-no">
-                                <!-- 调用父模版的 macro render_pagination -->
-                                {{ render_pagination('blog.article_list', article_list, tag_id) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xx-12 col-sm-4">
-                    <!-- 最近文章 -->
-                    <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner margin-bottom-no">
-                                <p class="card-heading">最近文章</p>
-                                <ul>
-                                    {% for article in recent_article_list %}
-                                    <li><a href="{{ url_for('blog.article_one', id=article.id) }}">
-                                        {{ article.title }}</a>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end 最近文章 -->
-    
-                    <!-- 最热tag -->
-                    <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner">
-                                <p class="card-heading">热门标签</p>
-                                <ul>
-                                    {% for tag in top_tag_list %}
-                                    <li><a href="{{ url_for('blog.article_list', page=1, tag_id=tag[0]) }}">{{ tag }}</a>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end tag -->
-                </div>
+                
 
             </div>
         </section>
     </div>
 
-</div>
-
-{% endblock %}
+</div> -->

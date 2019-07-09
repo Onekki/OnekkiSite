@@ -19,7 +19,7 @@ class BaseConfig(object):
     RECAPTCHA_PUBLIC_KEY = '6LcqjqsUAAAAAItx4Fhs-bhG9L4rcXT4hbXooZTL'
     RECAPTCHA_PRIVATE_KEY = '6LcqjqsUAAAAAJlGpkoXjT1HY-nQ1lQLklwqUWug'
     
-    SEND_FILE_MAX_AGE_DEFAULT = timedelta(seconds=5)
+    SEND_FILE_MAX_AGE_DEFAULT = timedelta(seconds=0)
     @staticmethod
     def init_app(app):
         pass

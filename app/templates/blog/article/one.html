@@ -1,68 +1,99 @@
 {% extends "blog/base.html" %}
 {% block title %}Onekki Blog{% endblock %}
-{% block body %}
-    <h3>{{ article_one.title }}</h3>
 
-    <div class="row">
-        <div class="col-lg-6">
-            <p>Written By {{ article_one.user_id }} on {{ article_one.publish_time }}</p>
-            <p>{{ article_one.content|safe }}</p>
-        </div> 
-        <div class="column">
-            <div class="col-lg-2">
-                <a class="btn btn-primary" href="{{ url_for('blog.article_add') }}">New</a>
-            </div>
-        </div>
-        <div class="column">
-            <div class="col-lg-2">
-                <a class="btn btn-primary" href="{{ url_for('blog.article_edit', id=article_one.id) }}">Edit</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-12">
-        <h3>New Comment</h3>
-        <form method="POST" action="{{ url_for('blog.article_one', id=article_one.id) }}">
-            {{ obj_form.hidden_tag() }}
-            <div>
-                {{ obj_form.name.label }}
-                {% if obj_form.name.errors %}
-                    {% for e in obj_form.name.errors %}
-                        <p class="help-block">{{ e }}</p>
-                    {% endfor %}
-                {% endif %}
-                {{ obj_form.name(class_="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ obj_form.content.label }}
-                {% if obj_form.content.errors %}
-                    {% for e in obj_form.content.errors %}
-                        <p class="help-block">{{ e }}</p>
-                    {% endfor %}
-                {% endif %}
-                {{ obj_form.content(class_='form-control') }}
-            </div>
-            <input class="btn btn-primary" type="submit" value="Add Comment">
-        </form>
-    </div>
-    <div class="row">
-        <h5>Tags</h5>
-        <ul>
-            {% for tag in tag_list %}
-                <li><a href="{{ url_for('blog.article_list', page=1, tag_id=tag.id) }}">{{ tag.name }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="row">
-        <h5>Comments</h5>
-        <ul>
-            {% for comment in comment_list %}
-                <div>
-                    name:{{ comment.name }} <br/>
-                    content:{{ comment.content }}
-                </div>
-            {% endfor %}
-        </ul>
-    </div>
+{% block body_title %}
+Onekki's Blog
 {% endblock %}
 
+{% block body_content %}
+<div class="card">
+    <div class="card-main">
+        <div class="card-inner">
+            <div class="card-header h3 margin-top-no">
+                <p style="text-align: center ;width:100%;"> {{ article_one.title }}</p>
+            </div>
+            <p class="text-center card-heading h5 margin-no">作者: {{ article_one.user.name }}</p>
+            <p class="text-center margin-top-no">{{ article_one.publish_time }}</p>
+            <p>{{ article_one.content|safe }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-main">
+        <div class="card-inner">
+            <div class="card-header h3 margin-top-no">
+                标签
+            </div>
+            <ul class="padding-left-no">
+                {% if tag_list|length > 0 %}
+                {% for tag in tag_list %}
+                <li><a href="{{ url_for('blog.article_list', page=1, tag_id=tag.id) }}">{{ tag.name }}</a></li>
+                {% endfor %}
+                {% else %}
+                <p class="h4 margin-no">作者没有设置标签.</p>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-main">
+        <div class="card-inner">
+            <div class="card-header h3 margin-top-no">
+                评论
+            </div>
+            <ul class="padding-left-no">
+                {% if comment_list|length > 0 %}
+                {% for comment in comment_list %}
+                <div>
+                    name:{{ comment.name }} <br />
+                    content:{{ comment.content }}
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="h4 margin-no">文章这么好, 居然还没有人评论.</p>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="card">
+    <div class="card-main">
+        <div class="card-inner">
+            <div class="card-header h3 margin-top-no">
+                发表评论
+            </div>
+            <form method="POST" action="{{ url_for('blog.article_one', id=article_one.id) }}">
+                {{ obj_form.hidden_tag() }}
+                <div class="form-group-label margin-top-no">
+                    {{ obj_form.name.label(class_="floating-label") }}
+                    {% if obj_form.name.errors %}
+                    {% for e in obj_form.name.errors %}
+                    <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                    {% endif %}
+                    {{ obj_form.name(class_="form-control maxwidth-auth") }}
+                </div>
+                <div class="form-group-label margin-top-no">
+                    {{ obj_form.content.label(class_="floating-label") }}
+                    {% if obj_form.content.errors %}
+                    {% for e in obj_form.content.errors %}
+                    <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                    {% endif %}
+                    {{ obj_form.content(class_='form-control maxwidth-auth') }}
+                </div>
+                <div class="text-center">
+                    <input class="btn btn-brand maxwidth-auth" type="submit" value="发表评论">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

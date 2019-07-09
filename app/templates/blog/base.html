@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,, initial-scale=1">
     <!-- css -->
-	<link href="{{ url_for('static', filename='theme/material/css/base.min.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='theme/material/css/project.min.css') }}" rel="stylesheet">
-    <link href="https://fonts.loli.net/css?family=Roboto:300,300italic,400,400italic,500,500italic|Material+Icons" rel="stylesheet">
-    <link href="{{ url_for('static', filename='theme/material/css/user.css') }}" rel="stylesheet" >
-	<!-- jquery -->
+    <link href="{{ url_for('static', filename='theme/material/css/base.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='theme/material/css/project.min.css') }}" rel="stylesheet">
+    <link href="https://fonts.loli.net/css?family=Roboto:300,300italic,400,400italic,500,500italic|Material+Icons"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='theme/material/css/user.css') }}" rel="stylesheet">
+    <!-- jquery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
 
@@ -59,7 +61,7 @@
 </head>
 
 <body class="page-orange">
-    
+
     <div class="container">
         {% with message_list = get_flashed_messages(with_categories=true) %}
         {% if message %}
@@ -75,15 +77,34 @@
 
         {% endwith %}
     </div>
-    {% block body %}
 
-    {% endblock %}
-   <!-- js -->
-	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0"></script>
+    {% include "blog/header.html" %}
+    <div class="content">
+        <div class="content-header ui-content-header">
+            <div class="container">
+                <h1 class="content-heading text-center" >
+                    {% block body_title %}{% endblock %}
+                </h1>
+            </div>
+        </div>
+
+        <div class="container">
+            <section class="content-inner">
+                <div class="ui-card-wrap">
+                    {% block body_content %}
+                    {% endblock %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- js -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0"></script>
     <script src="{{ url_for('static',filename='theme/material/js/base.min.js') }}"></script>
     <script src="{{ url_for('static', filename='theme/material/js/project.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1.5.16/dist/clipboard.min.js"></script>
-    <script type="text/javascript" color="0,217,255" opacity="0.5" count="49" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1"></script>
+    <script type="text/javascript" color="0,217,255" opacity="0.5" count="49"
+        src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1.0.1"></script>
     {% block js %}{% endblock %}
 </body>
 

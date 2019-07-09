@@ -4,10 +4,10 @@ from wtforms.validators import DataRequired, Length
 
 class CommentForm(FlaskForm):
     name = StringField(
-        'Name',
+        '评论人',
         validators=[DataRequired(), Length(max=255)]
     )
     content = TextField(
-        'Content',
+        '评论内容',
         validators = [DataRequired()]
-    )
+    )   

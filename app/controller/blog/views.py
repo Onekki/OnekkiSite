@@ -116,7 +116,7 @@ def make_cache_key(*args, **kwargs):
 
 # 获取文章
 @blog.route('/article/one/<int:id>', methods=['GET','POST'])
-@cache.cached(timeout=60, key_prefix=make_cache_key)
+# @cache.cached(timeout=60, key_prefix=make_cache_key)
 def article_one(id):
 
     form = CommentForm()
@@ -145,7 +145,7 @@ def article_one(id):
 
 # 文章列表
 @blog.route('/article/list/<int:page>')
-@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def article_list(page):
     filters = []
     tag_id = request.values.get('tag_id')
