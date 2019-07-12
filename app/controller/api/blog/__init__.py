@@ -7,7 +7,7 @@ from app.database.models import *
 from app.plugins import db
 
 from .blog_parser import *
-from .blog_fields import article_fields
+from .blog_fields import result_fields
 
 # 认证api
 class BlogAuthApi(Resource):
@@ -27,13 +27,13 @@ class BlogAuthApi(Resource):
 class BlogArticleApi(Resource):
 
 # 获取文章
-    @marshal_with(article_fields)
+    @marshal_with(result_fields)
     def get(self, id=None):
         if id:
             article = BlogArticle.query.filter_by(id=id).first()
             if not article:
                 abort(404)
-            return article
+            return {"data": article}
         else:
             args = article_get_parser.parse_args()
             page = args['page'] or 1
@@ -50,7 +50,7 @@ class BlogArticleApi(Resource):
                     BlogArticle.publish_time.desc()
                 ).paginate(page, 10)
             
-            return article_list.items
+            return {"data": article_list.items}
     
 # 创建文章
     def post(self, id=None):

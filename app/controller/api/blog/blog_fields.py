@@ -12,3 +12,8 @@ article_fields = {
     'tags': fields.List(fields.Nested(nested_tag_fields)),
     'publish_time': fields.DateTime(dt_format='iso8601')
 }
+
+
+result_fields = {
+    'data': fields.List(fields.Nested(article_fields))
+}
