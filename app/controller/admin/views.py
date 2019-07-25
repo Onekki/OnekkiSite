@@ -24,11 +24,11 @@ class CustomModelView(ModelView):
         user = current_user
         return current_user.is_authenticated() and permission_admin.can()
 
-# from app.forms.blog import CKTextAreaField
+from app.forms.blog import CKTextAreaField
 
 # 文章修改增强
 class ArticleView(CustomModelView):
-    # form_overrides = dict(content=CKTextAreaField)
+    form_overrides = dict(content=CKTextAreaField)
 
     column_searchable_list = ('content', 'title')
 

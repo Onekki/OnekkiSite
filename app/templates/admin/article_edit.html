@@ -2,7 +2,15 @@
 
 {% block tail %}
 {{ super() }}
-    <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/12.3.1/classic/ckeditor.js"></script>
+    <script>
+    ClassicEditor
+        .create( document.querySelector( '#editor' ) )
+        .catch( error => {
+            console.error( error );
+        } );
+</script>
+{#    <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>#}
     <!-- <script>
         CKEDITOR.replace('editor');
     </script> -->
